@@ -114,5 +114,56 @@ namespace COP4870_Assignment1.Services
                 items.Remove(itemToDelete);
             }
         }
+
+        public Item? GetItemByID(int id)
+        {
+            var item = items.FirstOrDefault(c => c.Id == id);
+            if (item != null)
+            {
+                var newItem = new Item
+                {
+                    Id = id,
+                    Name = item.Name,
+                    Description = item.Description,
+                    Price = item.Price,
+                    Count = item.Count
+                };
+
+                return newItem;
+            }
+            return null;
+        }
+
+        public bool UpdateCount(int id, int count, bool remove)
+        {
+            if (items == null)
+            {
+                return false;
+            }
+
+            var existingItem = items.Find(i => i.Id == id);
+            if (existingItem == null)
+            {
+                return false;
+            }
+
+            if (remove == true)
+            {
+                if (existingItem.Count < count)
+                {
+                    Console.WriteLine("There are not enough items left.\n");
+                    return false;
+                }
+                existingItem.Count -= count;
+                return true;
+            }
+            else
+            {
+                existingItem.Count += count;
+                return true;
+            }
+
+        }
+            
     }
 }

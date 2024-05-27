@@ -1,5 +1,7 @@
 ﻿using COP4870_Assignment1.Services;
 using COP4870_Assignment1.Models;
+using COP4870_Assign1.Services;
+using System.Diagnostics;
 
 namespace COP4870_Assignment1
 {
@@ -8,8 +10,9 @@ namespace COP4870_Assignment1
         static void Main(string[] args)
         {
             var itemSvc = ItemListProxy.Current;
+            var cart = new ShoppingCartProxy();
 
-            Console.WriteLine("Welcome to the Marketplace!\n");
+            Console.WriteLine("Welcome to Assignment 1!!\n");
 
             while (true)
             {
@@ -25,10 +28,10 @@ namespace COP4870_Assignment1
                     switch (intChoice)
                     {
                         case 1:
-                            itemSvc = ManageInventory(itemSvc);
+                            ManageInventory(itemSvc);
                             break;
                         case 2:
-                            //Shop(itemSvc);
+                            Shop(itemSvc, cart);
                             break;
                         case 3:
                             Environment.Exit(-1);
@@ -39,7 +42,7 @@ namespace COP4870_Assignment1
             }
         }
 
-        public static ItemListProxy ManageInventory(ItemListProxy itemSvc)
+        public static void ManageInventory(ItemListProxy itemSvc)
         {
             while (true)
             {
@@ -150,10 +153,110 @@ namespace COP4870_Assignment1
                             break;
 
                         case 5:
-                            return itemSvc;
+                            return;
                     }
                 }
             }
         }
+        
+        public static void Shop(ItemListProxy itemSvc, ShoppingCartProxy cart)
+        {
+            while(true)
+            {
+                Console.WriteLine("Shopping Page");
+                Console.WriteLine("1. List Inventory");
+                Console.WriteLine("2. List Shopping Cart");
+                Console.WriteLine("3. Add Item to Cart");
+                Console.WriteLine("4. Remove Item from Cart");
+                Console.WriteLine("5. Checkout");
+                Console.WriteLine("6. Return to Main Menu\n");
+
+                var choice = Console.ReadLine();
+                if (int.TryParse(choice, out int intChoice))
+                {
+                    switch (intChoice)
+                    {
+                        case 1:
+                            Console.WriteLine("Current Items:");
+                            if (itemSvc?.Items?.Count > 0)
+                            {
+                                foreach (var item in itemSvc.Items)
+                                {
+                                    Console.WriteLine(item);
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("There are no items in the inventory.\n");
+                            }
+                            break;
+
+                        case 2:
+                            Console.WriteLine("Shopping Cart:");
+                            if (cart?.Contents?.Count > 0)
+                            {
+                                foreach (var item in cart.Contents)
+                                {
+                                    Console.WriteLine(item);
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Your shopping cart is empty.\n");
+                            }
+                            break;
+
+                        case 3:
+                            Console.WriteLine("Enter the ID of the item to add to cart:");
+                            int.TryParse(Console.ReadLine(), out int id);
+                            bool exists = itemSvc?.Items?.Any(item => item.Id == id) ?? false;
+                            if (!exists)
+                            {
+                                Console.WriteLine("Invalid ID\n");
+                                break;
+                            }
+
+                            Console.WriteLine("Enter the amount you want to buy:");
+                            int.TryParse(Console.ReadLine(), out int count);
+
+                            if (itemSvc.UpdateCount(id, count, true))
+                            {
+                                var itemToAdd = itemSvc.GetItemByID(id);
+                                itemToAdd.Count = count;
+                                cart.AddItem(itemToAdd);
+                            }
+                            break;
+
+                        case 4:
+                            Console.WriteLine("Enter the ID of the item to remove from cart:");
+                            int.TryParse(Console.ReadLine(), out id);
+                            exists = cart?.Contents?.Any(item => item.Id == id) ?? false;
+                            if (!exists)
+                            {
+                                Console.WriteLine("Item is not in your cart\n");
+                                break;
+                            }
+
+                            Console.WriteLine("Enter the amount you want to remove:");
+                            int.TryParse(Console.ReadLine(), out count);
+                            if (cart.RemoveItem(id, count))
+                            {
+                                itemSvc.UpdateCount(id, count, false);
+                            }
+                            break;
+
+                        case 5:
+                            // checkout
+                            Console.WriteLine(cart.Checkout());
+                            break;
+
+                        case 6:
+                            return;
+                    }
+                }
+            }
+
+        }
+    
     }
 }

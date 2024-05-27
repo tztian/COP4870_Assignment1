@@ -47,7 +47,7 @@ namespace COP4870_Assignment1.Models
 
         public override string ToString()
         {
-            return $"[{Id}] {Name}: {Description}\nPrice: ${Price}\nCount: {Count}\n";
+            return $"[{Id}] {Name}: {Description}\nPrice: {Price:C}\nCount: {Count}\n";
         }
     }
 }
