@@ -16,7 +16,7 @@ namespace COP4870_Assignment1
 
             while (true)
             {
-                // menu
+                // main menu
                 Console.WriteLine("Main Menu:");
                 Console.WriteLine("1. Inventory Management Page");
                 Console.WriteLine("2. Shop Page");
@@ -28,12 +28,15 @@ namespace COP4870_Assignment1
                     switch (intChoice)
                     {
                         case 1:
+                            // inventory management
                             ManageInventory(itemSvc);
                             break;
                         case 2:
+                            // shopping
                             Shop(itemSvc, cart);
                             break;
                         case 3:
+                            // exit
                             Environment.Exit(-1);
                             break;
 
@@ -59,6 +62,7 @@ namespace COP4870_Assignment1
                     switch (intChoice)
                     {
                         case 1:
+                            // create item
                             Console.WriteLine("Enter the name of the item:");
                             var name = Console.ReadLine();
                             Console.WriteLine("Enter a description of the item:");
@@ -82,6 +86,7 @@ namespace COP4870_Assignment1
                             break;
 
                         case 2:
+                            // display all items
                             Console.WriteLine("Current Items:");
                             if (itemSvc?.Items?.Count > 0)
                             {
@@ -97,6 +102,7 @@ namespace COP4870_Assignment1
                             break;
 
                         case 3:
+                            // update item
                             Console.WriteLine("Enter the ID of an item to update:");
                             if (int.TryParse(Console.ReadLine(), out int target))
                             {
@@ -137,6 +143,7 @@ namespace COP4870_Assignment1
                             break;
 
                         case 4:
+                            // delete item
                             Console.WriteLine("Enter the ID of an item to delete:");
                             if (int.TryParse(Console.ReadLine(), out target))
                             {
@@ -177,6 +184,7 @@ namespace COP4870_Assignment1
                     switch (intChoice)
                     {
                         case 1:
+                            // display items in the inventory
                             Console.WriteLine("Current Items:");
                             if (itemSvc?.Items?.Count > 0)
                             {
@@ -192,6 +200,7 @@ namespace COP4870_Assignment1
                             break;
 
                         case 2:
+                            // display items in the shopping cart
                             Console.WriteLine("Shopping Cart:");
                             if (cart?.Contents?.Count > 0)
                             {
@@ -207,6 +216,7 @@ namespace COP4870_Assignment1
                             break;
 
                         case 3:
+                            // add an item to the shopping cart
                             Console.WriteLine("Enter the ID of the item to add to cart:");
                             int.TryParse(Console.ReadLine(), out int id);
                             bool exists = itemSvc?.Items?.Any(item => item.Id == id) ?? false;
@@ -219,8 +229,10 @@ namespace COP4870_Assignment1
                             Console.WriteLine("Enter the amount you want to buy:");
                             int.TryParse(Console.ReadLine(), out int count);
 
+                            // if the item count is successfully updated in the inventory
                             if (itemSvc.UpdateCount(id, count, true))
                             {
+                                // add the item to the cart
                                 var itemToAdd = itemSvc.GetItemByID(id);
                                 itemToAdd.Count = count;
                                 cart.AddItem(itemToAdd);
@@ -228,6 +240,7 @@ namespace COP4870_Assignment1
                             break;
 
                         case 4:
+                            // remove an item from the cart
                             Console.WriteLine("Enter the ID of the item to remove from cart:");
                             int.TryParse(Console.ReadLine(), out id);
                             exists = cart?.Contents?.Any(item => item.Id == id) ?? false;
